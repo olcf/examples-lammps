@@ -1,0 +1,130 @@
+# WORK IN PROGRESS -- this spack environment is dependent on the CMake build for LAMMPS working, and it currently does not
+
+spack:
+    # This spack.yaml environment file was developed and tested using Spack version 0.21.0 (commit 65d3221a9c436e77af9e802e543c71bd702ff4e2)
+    # This environment attempts to build LAMMPS with the Kokkos backend using hipFFT
+    # Caveats:
+    #   - be sure to unload `darshan-runtime` if you are using cray-mpich != 8.1.23
+    #   - due to [Issue #3775](https://github.com/lammps/lammps/issues/3775), the CMake build system (used by Spack) does not
+    #     support using hipFFT for FFT's quite yet. In this build, you will currently use the FFTW3 library
+    #   - be careful to match versions of hipfft, hip, hsa-rocr-dev, and other ROCm-related components
+    #   - the craype-accel-amd-gfx90a module is required and is used by the Cray wrappers to link the GPU-aware MPI libraries in
+    #       - the PrgEnv-gcc toolchain build does not support this currently
+
+    specs:
+    #- lammps@20230802 %gcc@12.2.0 lammps_sizes=bigbig ~openmp ~opencl +kokkos +rocm +kspace +rigid +molecule amdgpu_target=gfx90a
+    - lammps@20230802 %rocmcc@5.5.1 lammps_sizes=bigbig ~openmp ~opencl +kokkos +rocm +kspace +rigid +molecule amdgpu_target=gfx90a
+
+    view: false
+    concretizer:
+        unify: false
+        reuse: true
+    config:
+        concretizer: clingo
+        #source_cache: # TODO
+        #misc_cache: # TODO
+        #build_stage: # TODO
+        #test_stage: # TODO
+        source_cache: /autofs/nccs-svm1_home2/hagertnl/Scratch/spack_workspace/cache
+        misc_cache: /autofs/nccs-svm1_home2/hagertnl/Scratch/spack_workspace/misc
+        build_stage: /autofs/nccs-svm1_home2/hagertnl/Scratch/spack_workspace/build
+        test_stage: /autofs/nccs-svm1_home2/hagertnl/Scratch/spack_workspace/test
+        install_tree:
+            root: /autofs/nccs-svm1_home2/hagertnl/Scratch/spack_workspace/install
+
+    compilers:
+    - compiler:
+        spec: gcc@12.2.0
+        paths:
+            cc: cc
+            cxx: CC
+            f77: /opt/cray/pe/gcc/12.2.0/bin/gfortran
+            fc: /opt/cray/pe/gcc/12.2.0/bin/gfortran
+        flags:
+            cflags: -ldl
+            cppflags: -ldl
+        operating_system: sles15
+        target: any
+        modules:
+        - PrgEnv-gnu/8.4.0
+        - gcc/12.2.0
+        - libfabric
+        environment: {}
+        extra_rpaths: []
+    - compiler:
+        spec: rocmcc@5.5.1
+        paths:
+            cc: amdclang
+            cxx: amdclang++
+            f77: None
+            fc: None
+        operating_system: sles15
+        target: any
+        modules:
+        - PrgEnv-amd/8.4.0
+        - amd/5.5.1
+        - craype-accel-amd-gfx90a
+        - libfabric
+        environment: {}
+        extra_rpaths: []
+    packages:
+        all:
+            providers:
+                mpi: [cray-mpich]
+            target: [zen3]
+        libfabric:
+            buildable: false
+            externals:
+            - modules:
+              - libfabric/1.15.2.0
+              spec: libfabric@1.15.2.0
+            version: [1.15.2.0]
+        cmake:
+            buildable: false
+            externals:
+            - modules:
+              - cmake/3.23.2
+              spec: cmake@3.23.2
+            version: [3.23.2]
+        cray-mpich:
+            buildable: false
+            externals:
+            - modules:
+              - cray-mpich/8.1.25
+              spec: cray-mpich@8.1.25
+            - modules:
+              - cray-mpich/8.1.26
+              spec: cray-mpich@8.1.26
+            - modules:
+              - cray-mpich/8.1.27
+              spec: cray-mpich@8.1.27
+            version: [8.1.25, 8.1.26, 8.1.27]
+
+        hip:
+            buildable: false
+            externals:
+            - extra_attributes:
+                compilers:
+                    hip: /opt/rocm-5.5.1/bin/hipcc
+              prefix: /opt/rocm-5.5.1
+              spec: hip@5.5.1
+            version: [5.5.1]
+        hipfft:
+            buildable: false
+            externals:
+            - prefix: /opt/rocm-5.5.1
+              spec: hipfft@5.5.1
+            version: [5.5.1]
+        llvm-amdgpu:
+            buildable: false
+            externals:
+            - prefix: /opt/rocm-5.5.1/llvm
+              spec: llvm-amdgpu@5.5.1
+            version: [5.5.1]
+        hsa-rocr-dev:
+            buildable: false
+            externals:
+            - prefix: /opt/rocm-5.5.1
+              spec: hsa-rocr-dev@5.5.1
+            version: [5.5.1]
+
