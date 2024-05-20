@@ -5,7 +5,7 @@
 # - Contains support for GPU-aware MPI
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: December 19, 2023
+# Last modified: May 20, 2024
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
@@ -18,12 +18,20 @@
 module load PrgEnv-amd
 
 # If we're using PrgEnv-cray, we need to explicitly load device libraries.
-# `amd-mixed` is the vendor-provided equivalent of the `rocm` modules (which are maintained by OLCF).
-# `amd-mixed` is compatible with Cray-PE (ie, cray-mpich, cray-libsci, etc), so this is preferred.
-# `rocm` module is built by OLCF and is not guaranteed to be compatible with everything
+# The `rocm` module provides the ROCm toolkit for all programming environments.
+# As of the Cray/HPE Programming Environment (CPE) December 2023 release, the `rocm` module must be loaded for ALL compiler toolchains.
+# PrgEnv-amd no longer automatically provides the ROCm toolkit.
 
-# PrgEnv-amd uses the `amd` module to load a version of ROCm compilers, so load an `amd` version that we're happy with
-module load amd/5.5.1
+# FFTW3 for host-based FFT
+module load cray-fftw
+
+# We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
+module load cpe/23.12
+
+# PrgEnv-amd uses the `amd` module to load a version of the AMD compilers, so load an `amd` version that we're happy with
+# `rocm` is needed to load the ROCm device toolchain
+module load amd/5.7.1
+#module load rocm/5.7.1
 
 # HWLOC is optional. No real performance benefit or gain
 module load hwloc
@@ -45,7 +53,7 @@ rm -f ./MAKE/MINE/Makefile.gfx90a
 cp ${startdir}/build_files/Makefile.gfx90a ./MAKE/MINE/Makefile.gfx90a
 
 echo "Installing packages..."
-for package in kokkos class2 kspace rigid; do
+for package in kokkos class2 kspace rigid molecule; do
     make yes-$package
 done
 
