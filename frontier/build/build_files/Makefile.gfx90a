@@ -6,17 +6,14 @@ SHELL = /bin/sh
 # compiler/linker settings
 # specify flags and libraries needed for your compiler
 
-# This Makefile uses hipcc to compile the HIP-enabled Kokkos backend of LAMMPS, using hipFFT and GPU-aware MPI on Frontier/Crusher
-
-# HWLOC is optional, and does not really translate to a significant performance benefit
-
+cc =		hipcc
 CC =		hipcc
-CCFLAGS =	-g -O3 -I${OLCF_HWLOC_ROOT}/include -munsafe-fp-atomics
+CCFLAGS =	-g -O3 -DNDEBUG -munsafe-fp-atomics -I${OLCF_HWLOC_ROOT}/include -DKOKKOS_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS -fdenormal-fp-math=ieee -fgpu-flush-denormals-to-zero
 SHFLAGS =	-fPIC 
 DEPFLAGS =	-M
 
 LINK =		hipcc
-LINKFLAGS =	-g -O3 -munsafe-fp-atomics -L${ROCM_PATH}/lib -lhsa-runtime64 -L${OLCF_HWLOC_ROOT}/lib -lhwloc
+LINKFLAGS =	-g -O3 -munsafe-fp-atomics -L${OLCF_HWLOC_ROOT}/lib -lhwloc
 LIB =
 SIZE =		size
 
@@ -58,9 +55,9 @@ MPI_LIB =       -lmpi ${PE_MPICH_GTL_LIBS_amd_gfx90a}
 # PATH = path for FFT library
 # LIB = name of FFT library
 
-FFT_INC =    -DFFT_HIPFFT -I${ROCM_PATH}/hipfft/include
-FFT_PATH =   -L${ROCM_PATH}/hipfft/lib
-FFT_LIB =    -lhipfft
+FFT_INC =    -DFFT_KOKKOS_HIPFFT -DFFT_FFTW -I${FFTW_INC}
+FFT_PATH =   -L${ROCM_PATH}/lib -L${FFTW_DIR}
+FFT_LIB =    -lhipfft -lfftw3 -lfftw3_omp
 
 # JPEG and/or PNG library
 # see discussion in Section 3.5.4 of manual
