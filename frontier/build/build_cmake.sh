@@ -1,23 +1,24 @@
 #!/bin/bash
 
-# WORK IN PROGRESS -- this script is not ready for use in production. Please use the make-based build script.
-
 # LAMMPS build script
-# - Uses `cmake` to build a Kokkos-enabled binary of LAMMPS with the HIP backend
-# - Contains support for GPU-aware MPI
+# - Uses `cmake` to build a Kokkos-enabled binary of LAMMPS with the HIP backend and hipFFT for FFT's
+# - With support for GPU-aware MPI
+
+# NOTICE: Please use the latest available LAMMPS releases. Prior to the February 7, 2024 release,
+# the PPPM implementation in KOKKOS could not select the correct FFT library.
 
 # Caveats:
-# - KSPACE: CMake build does not support hipFFT as of December 2023.
-#   [PR #4007](https://github.com/lammps/lammps/pull/4007) will resolve this.
+# - KSPACE: CMake build does not support selection of hipFFT prior to February 2024
+#   [PR #4007](https://github.com/lammps/lammps/pull/4007) resolved this in February 6, 2024
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: December 19, 2023
+# Last modified: May 20, 2024
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
-#   PrgEnv-amd -- AMD, clang-based, automatically includes setup of device libraries (no need to load amd-mixed/rocm)
+#   PrgEnv-amd -- AMD, clang-based
 #   PrgEnv-gnu -- GNU compiler toolchain
-# All 3 PrgEnv's have `cc/CC/ftn` as the compiler wrapper around `C/C++/Fortran`.
+# All 3 PrgEnv's supply `cc/CC/ftn` as the compiler wrapper around `C/C++/Fortran` compilers
 # These wrappers automatically link cray-mpich and some other things, depending on loaded modules
 
 # However, our LAMMPS build uses ``hipcc`` as the compiler, since that's what Kokkos currently requires, so we use PrgEnv-amd
@@ -25,21 +26,25 @@
 module load PrgEnv-amd
 
 # If we're using PrgEnv-cray or gnu, we need to explicitly load device libraries.
-# `amd-mixed` is the vendor-provided equivalent of the `rocm` modules (which are maintained by OLCF).
-# `amd-mixed` is compatible with Cray-PE (ie, cray-mpich, cray-libsci, etc), so this is preferred.
-# `rocm` module is built by OLCF and is not guaranteed to be compatible with everything
+# The `rocm` module is provides the ROCm device toolchain.
+# As of the Cray/HPE Programming Environment (CPE) December 2023 release, the `rocm` module must be loaded for ALL compiler toolchains.
+# PrgEnv-amd no longer automatically provides the ROCm toolkit.
+
+# FFTW3 for host-based FFT
+module load cray-fftw
+
+# We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
+module load cpe/23.12
 
 # PrgEnv-amd uses the `amd` module to load a version of ROCm compilers, so load an `amd` version that we're happy with
-module load amd/5.5.1
+module load amd/5.7.1
+#module load rocm/5.7.1
 
 # HWLOC is optional. No real performance benefit or gain
 module load hwloc
 
 # The `cmake` module is needed for building with `cmake`
 module load cmake
-
-# FFTW3 for host-based FFT
-module load cray-fftw
 
 [ ! -d ./lammps ] && git clone https://github.com/lammps/lammps.git
 
@@ -74,8 +79,6 @@ export HIPCC_LINK_FLAGS_APPEND=""
 
 cd build
 
-# FFT: this build uses KISS-FFT, the LAMMPS built-in. In order to use hipFFT, you must modify
-#   lammps/cmake/Modules/Packages/KSPACE.cmake to allow HIPFFT as a valid FFT in `set(FFT_VALUES...)`
 cmake \
        -DPKG_KOKKOS=on \
        -DPKG_MOLECULE=on \
@@ -89,6 +92,7 @@ cmake \
        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
        -DKokkos_ENABLE_HIP=on \
        -DFFT=FFTW3 \
+       -DFFT_KOKKOS=hipFFT \
        -DKokkos_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS=ON \
        -DKokkos_ENABLE_SERIAL=on \
        -DBUILD_OMP=off \
