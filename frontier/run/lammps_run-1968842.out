@@ -1,0 +1,122 @@
+
+Lmod is automatically replacing "cce/15.0.0" with "amd/5.3.0".
+
+
+Lmod is automatically replacing "PrgEnv-cray/8.3.3" with "PrgEnv-amd/8.3.3".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) cray-mpich/8.1.23
+
+
+The following have been reloaded with a version change:
+  1) PrgEnv-amd/8.3.3 => PrgEnv-amd/8.5.0
+  2) cray-fftw/3.3.10.3 => cray-fftw/3.3.10.6
+  3) cray-libsci/22.12.1.1 => cray-libsci/23.12.5
+  4) cray-mpich/8.1.23 => cray-mpich/8.1.28
+  5) cray-pmi/6.1.8 => cray-pmi/6.1.13
+  6) craype/2.7.19 => craype/2.7.30
+  7) perftools-base/22.12.0 => perftools-base/23.12.0
+
+
+The following have been reloaded with a version change:
+  1) amd/5.3.0 => amd/5.7.1
+
+Using /autofs/nccs-svm1_home2/hagertnl/build_scratch/examples-lammps/frontier/build/lammps/install/bin/lmp
+Beginning SBCAST
+SBCAST exit code: 0
+Adding symlinks to several libraries
+Finished adding symlinks
+Patching LD_LIBRARY_PATH
+LAMMPS (17 Apr 2024 - Development - patch_17Apr2024-147-g77239a75dc)
+  using 7 OpenMP thread(s) per MPI task
+Lattice spacing in x,y,z = 1.6795962 1.6795962 1.6795962
+Created orthogonal box = (0 0 0) to (335.91924 335.91924 335.91924)
+  2 by 2 by 4 MPI processor grid
+Created 32000000 atoms
+  using lattice units in orthogonal box = (0 0 0) to (335.91924 335.91924 335.91924)
+  create_atoms CPU = 0.145 seconds
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+- GPU package (short-range, long-range and three-body potentials): doi:10.1016/j.cpc.2010.12.021, doi:10.1016/j.cpc.2011.10.012, doi:10.1016/j.cpc.2013.08.002, doi:10.1016/j.commatsci.2014.10.068, doi:10.1016/j.cpc.2016.10.020, doi:10.3233/APC200086
+The log file lists these citations in BibTeX format.
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+
+--------------------------------------------------------------------------
+- Using acceleration for lj/cut:
+-  with 8 proc(s) per device.
+-  with 7 thread(s) per proc.
+-  Horizontal vector operations: ENABLED
+-  Shared memory system: No
+--------------------------------------------------------------------------
+Device 0: AMD Instinct MI250X, 110 CUs, 64/64 GB, 1.7 GHZ (Mixed Precision)
+--------------------------------------------------------------------------
+
+Initializing Device and compiling on process 0...Done.
+Initializing Device 0 on core 0...Done.
+Initializing Device 0 on core 1...Done.
+Initializing Device 0 on core 2...Done.
+Initializing Device 0 on core 3...Done.
+Initializing Device 0 on core 4...Done.
+Initializing Device 0 on core 5...Done.
+Initializing Device 0 on core 6...Done.
+Initializing Device 0 on core 7...Done.
+
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 0
+  Time step     : 0.005
+Per MPI rank memory allocation (min/avg/max) = 779.3 | 779.3 | 779.3 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   1.44          -6.7733674      0             -4.6133674     -5.0196697    
+       100   0.75941603    -5.7614399      0             -4.6223159      0.19027572   
+Loop time of 4.66404 on 112 procs for 100 steps with 32000000 atoms
+
+Performance: 9262.350 tau/day, 21.441 timesteps/s, 686.100 Matom-step/s
+692.3% CPU use with 16 MPI tasks x 7 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.3233     | 1.3712     | 1.4235     |   2.2 | 29.40
+Neigh   | 3.387e-06  | 5.1388e-06 | 7.806e-06  |   0.0 |  0.00
+Comm    | 1.0931     | 1.154      | 1.2177     |   2.8 | 24.74
+Output  | 0.0043125  | 0.0049765  | 0.0057185  |   0.5 |  0.11
+Modify  | 1.6764     | 1.6955     | 1.7112     |   0.8 | 36.35
+Other   |            | 0.4384     |            |       |  9.40
+
+Nlocal:          2e+06 ave 2.00023e+06 max 1.99978e+06 min
+Histogram: 3 0 1 1 2 3 3 1 1 1
+Nghost:         288817 ave      289040 max      288496 min
+Histogram: 1 0 0 1 2 4 4 1 1 2
+Neighs:              0 ave           0 max           0 min
+Histogram: 16 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Neighbor list builds = 5
+Dangerous builds not checked
+
+
+---------------------------------------------------------------------
+      Device Time Info (average): 
+---------------------------------------------------------------------
+CPU Cast/Pack:   1.2948 s.
+CPU Driver_Time: 0.0036 s.
+CPU Idle_Time:   0.0166 s.
+Average split:   1.0000.
+Max Mem / Proc:  2760.52 MB.
+Prefetch mode:   None.
+Vector width:    64.
+Lanes / atom:    4.
+Pair block:      256.
+Neigh block:     128.
+Neigh mode:      Device - legacy
+---------------------------------------------------------------------
+
+Total wall time: 0:00:05
