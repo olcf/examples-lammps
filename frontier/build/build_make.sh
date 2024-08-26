@@ -31,7 +31,7 @@ module load cpe/23.12
 # PrgEnv-amd uses the `amd` module to load a version of the AMD compilers, so load an `amd` version that we're happy with
 # `rocm` is needed to load the ROCm device toolchain
 module load amd/5.7.1
-#module load rocm/5.7.1
+module load rocm/5.7.1
 
 # HWLOC is optional. No real performance benefit or gain
 module load hwloc
