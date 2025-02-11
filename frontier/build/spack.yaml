@@ -7,7 +7,7 @@ spack:
 
     specs:
     # LAMMPS version 20240417 or greater is needed due to FFT refactoring in LAMMPS source code
-    - lammps@20240417 %rocmcc@5.7.1 ~openmp~opencl+kokkos+rocm+kspace+rigid+molecule amdgpu_target=gfx90a fft=fftw3 fft_kokkos=hipfft lammps_sizes=bigbig
+    - lammps@20240417 %rocmcc@6.2.4 ~openmp~opencl+kokkos+rocm+kspace+rigid+molecule amdgpu_target=gfx90a fft=fftw3 fft_kokkos=hipfft lammps_sizes=bigbig
 
     view: false
 
@@ -42,18 +42,18 @@ spack:
 
     compilers:
     - compiler:
-        spec: rocmcc@5.7.1
+        spec: rocmcc@6.2.4
         paths:
-            cc: amdclang
-            cxx: amdclang++
+            cc: /opt/rocm-6.2.4/bin/amdclang
+            cxx: /opt/rocm-6.2.4/bin/amdclang++
             f77: None
             fc: None
         operating_system: sles15
         target: any
         modules:
-        - PrgEnv-amd/8.5.0
-        - amd/5.7.1
-        - rocm/5.7.1
+        - PrgEnv-amd
+        - amd/6.2.4
+        - rocm/6.2.4
         - craype-accel-amd-gfx90a
         - libfabric
         environment: {}
@@ -101,40 +101,40 @@ spack:
             buildable: false
             externals:
             - modules:
-              - cray-mpich/8.1.28
-              spec: cray-mpich@8.1.28
-            version: [8.1.28]
+              - cray-mpich/8.1.31
+              spec: cray-mpich@8.1.31
+            version: [8.1.31]
         hip:
             buildable: false
             externals:
             - extra_attributes:
                 compilers:
-                    hip: /opt/rocm-5.7.1/bin/hipcc
-              prefix: /opt/rocm-5.7.1
-              spec: hip@5.7.1
-            version: [5.7.1]
+                    hip: /opt/rocm-6.2.4/bin/hipcc
+              prefix: /opt/rocm-6.2.4
+              spec: hip@6.2.4
+            version: [6.2.4]
         hipfft:
             buildable: false
             externals:
-            - prefix: /opt/rocm-5.7.1
-              spec: hipfft@5.7.1
-            version: [5.7.1]
+            - prefix: /opt/rocm-6.2.4
+              spec: hipfft@6.2.4
+            version: [6.2.4]
         llvm-amdgpu:
             buildable: false
             externals:
-            - prefix: /opt/rocm-5.7.1/llvm
-              spec: llvm-amdgpu@5.7.1
-            version: [5.7.1]
+            - prefix: /opt/rocm-6.2.4/llvm
+              spec: llvm-amdgpu@6.2.4
+            version: [6.2.4]
         hsa-rocr-dev:
             buildable: false
             externals:
-            - prefix: /opt/rocm-5.7.1
-              spec: hsa-rocr-dev@5.7.1
-            version: [5.7.1]
+            - prefix: /opt/rocm-6.2.4
+              spec: hsa-rocr-dev@6.2.4
+            version: [6.2.4]
         rocthrust:
             buildable: false
             externals:
-            - prefix: /opt/rocm-5.7.1
-              spec: rocthrust@5.7.1
-            version: [5.7.1]
+            - prefix: /opt/rocm-6.2.4
+              spec: rocthrust@6.2.4
+            version: [6.2.4]
 
