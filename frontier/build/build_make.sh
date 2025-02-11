@@ -5,7 +5,7 @@
 # - Contains support for GPU-aware MPI
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: May 20, 2024
+# Last modified: February 11, 2025
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
@@ -26,12 +26,12 @@ module load PrgEnv-amd
 module load cray-fftw
 
 # We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
-module load cpe/23.12
+module load cpe/24.11
 
 # PrgEnv-amd uses the `amd` module to load a version of the AMD compilers, so load an `amd` version that we're happy with
 # `rocm` is needed to load the ROCm device toolchain
-module load amd/5.7.1
-module load rocm/5.7.1
+module load amd/6.2.4
+module load rocm/6.2.4
 
 # HWLOC is optional. No real performance benefit or gain
 module load hwloc

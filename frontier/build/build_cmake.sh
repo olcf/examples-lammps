@@ -12,7 +12,7 @@
 #   [PR #4007](https://github.com/lammps/lammps/pull/4007) resolved this in February 6, 2024
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: May 20, 2024
+# Last modified: February 11, 2025
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
@@ -34,11 +34,11 @@ module load PrgEnv-amd
 module load cray-fftw
 
 # We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
-module load cpe/23.12
+module load cpe/24.11
 
 # PrgEnv-amd uses the `amd` module to load a version of ROCm compilers, so load an `amd` version that we're happy with
-module load amd/5.7.1
-module load rocm/5.7.1
+module load amd/6.2.4
+module load rocm/6.2.4
 
 # HWLOC is optional. No real performance benefit or gain
 module load hwloc
