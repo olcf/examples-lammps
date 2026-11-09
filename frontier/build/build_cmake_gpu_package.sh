@@ -2,39 +2,33 @@
 
 # LAMMPS build script
 # - Uses `cmake` to build a Kokkos-enabled binary of LAMMPS with the HIP backend of the GPU package
-# - With support for GPU-aware MPI
+# - With support for GPU-aware MPI on Frontier
 
 # Caveats:
 # - We recommend considering the Kokkos acceleration package in addition to GPU package, as more AMDGPU-related features exist in Kokkos package
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: February 11, 2025
+# Last modified: November 9, 2026
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
 #   PrgEnv-amd -- AMD, clang-based
 #   PrgEnv-gnu -- GNU compiler toolchain
-# All 3 PrgEnv's supply `cc/CC/ftn` as the compiler wrapper around `C/C++/Fortran` compilers
-# These wrappers automatically link cray-mpich and some other things, depending on loaded modules
 
 # However, our LAMMPS build uses ``hipcc`` as the compiler, so we use PrgEnv-amd
 # ``hipcc`` is making calls to ``amdclang++``, so it makes the most sense to load PrgEnv-amd
 module load PrgEnv-amd
 
-# If we're using PrgEnv-cray or gnu, we need to explicitly load device libraries.
-# The `rocm` module is provides the ROCm device toolchain.
-# As of the Cray/HPE Programming Environment (CPE) December 2023 release, the `rocm` module must be loaded for ALL compiler toolchains.
-# PrgEnv-amd no longer automatically provides the ROCm toolkit.
-
 # FFTW3 for host-based FFT
 module load cray-fftw
 
 # We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
-module load cpe/24.11
+module load cpe/26.03
 
 # PrgEnv-amd uses the `amd` module to load a version of ROCm compilers, so load an `amd` version that we're happy with
-module load amd/6.2.4
-module load rocm/6.2.4
+# ROCm/7.0.2 has some issues with crashing in LAMMPS simulations, so we update to 7.2.0 here
+module load amd/7.2.0
+module load rocm/7.2.0
 
 # The `cmake` module is needed for building with `cmake`
 module load cmake
@@ -80,7 +74,7 @@ cmake \
        -DFFTW3_INCLUDE_DIRS=$FFTW_ROOT/include \
        -DFFTW3_LIBRARIES=$FFTW_ROOT/lib \
        -DBUILD_OMP=on \
-       -DCMAKE_CXX_STANDARD=14 \
+       -DCMAKE_CXX_STANDARD=20 \
        -DCMAKE_CXX_FLAGS="${FLAGS}" \
        -DCMAKE_EXE_LINKER_FLAGS="${LINKFLAGS}" \
        -DLAMMPS_MACHINE=${LMPMACH} \

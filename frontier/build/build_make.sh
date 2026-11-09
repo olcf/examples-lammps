@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# DEPRECATED -- at this point, OLCF highly recommends using the CMake build system, and this script is no longer maintained
+
 # LAMMPS build script
 # - Uses `make` to build a Kokkos-enabled binary of LAMMPS with the HIP backend + hipFFT
 # - Contains support for GPU-aware MPI

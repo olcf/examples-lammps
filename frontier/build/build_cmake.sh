@@ -2,46 +2,34 @@
 
 # LAMMPS build script
 # - Uses `cmake` to build a Kokkos-enabled binary of LAMMPS with the HIP backend and hipFFT for FFT's
-# - With support for GPU-aware MPI
-
-# NOTICE: Please use the latest available LAMMPS releases. Prior to the February 7, 2024 release,
-# the PPPM implementation in KOKKOS could not select the correct FFT library.
+# - With support for GPU-aware MPI on Frontier
 
 # Caveats:
 # - KSPACE: CMake build does not support selection of hipFFT prior to February 2024
 #   [PR #4007](https://github.com/lammps/lammps/pull/4007) resolved this in February 6, 2024
 
 # Author: Nick Hagerty (hagertynl@ornl.gov)
-# Last modified: February 11, 2025
+# Last modified: November 9, 2026
 
 # Frontier has 3 PrgEnv (programming environments) available:
 #   PrgEnv-cray -- HPE/Cray, clang-based
 #   PrgEnv-amd -- AMD, clang-based
 #   PrgEnv-gnu -- GNU compiler toolchain
-# All 3 PrgEnv's supply `cc/CC/ftn` as the compiler wrapper around `C/C++/Fortran` compilers
-# These wrappers automatically link cray-mpich and some other things, depending on loaded modules
 
-# However, our LAMMPS build uses ``hipcc`` as the compiler, since that's what Kokkos currently requires, so we use PrgEnv-amd
-# ``hipcc`` is making calls to ``amdclang++``, so it makes the most sense to load PrgEnv-amd
+# However, our LAMMPS build uses ``hipcc`` as the compiler, since that's what Kokkos requires, so we use PrgEnv-amd
+# ``hipcc`` makes calls to ``amdclang++``, so it makes the most sense to load PrgEnv-amd
 module load PrgEnv-amd
-
-# If we're using PrgEnv-cray or gnu, we need to explicitly load device libraries.
-# The `rocm` module is provides the ROCm device toolchain.
-# As of the Cray/HPE Programming Environment (CPE) December 2023 release, the `rocm` module must be loaded for ALL compiler toolchains.
-# PrgEnv-amd no longer automatically provides the ROCm toolkit.
 
 # FFTW3 for host-based FFT
 module load cray-fftw
 
 # We will use the latest available version of the CrayPE components (mainly cray-mpich) in this build:
-module load cpe/24.11
+module load cpe/26.03
 
 # PrgEnv-amd uses the `amd` module to load a version of ROCm compilers, so load an `amd` version that we're happy with
-module load amd/6.2.4
-module load rocm/6.2.4
-
-# HWLOC is optional. No real performance benefit or gain
-module load hwloc
+# NOTE: ROCm/7.0.2 has a bug that causes it to crash with internal HSA errors in many types of LAMMPS simulations, so we use 7.2.0 here
+module load amd/7.2.0
+module load rocm/7.2.0
 
 # The `cmake` module is needed for building with `cmake`
 module load cmake
@@ -95,10 +83,10 @@ cmake \
        -DFFT_KOKKOS=hipFFT \
        -DKokkos_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS=ON \
        -DKokkos_ENABLE_SERIAL=on \
-       -DBUILD_OMP=off \
-       -DCMAKE_CXX_STANDARD=14 \
+       -DBUILD_OMP=ON \
+       -DCMAKE_CXX_STANDARD=20 \
        -DKokkos_ARCH_VEGA90A=ON \
-       -DKokkos_ENABLE_HWLOC=on \
+       -DKokkos_ENABLE_HWLOC=OFF \
        -DCMAKE_CXX_FLAGS="${FLAGS}" \
        -DCMAKE_EXE_LINKER_FLAGS="${LINKFLAGS}" \
        -DLAMMPS_MACHINE=${LMPMACH} \
