@@ -10,10 +10,9 @@
 # This directly copies the build environment. See build scripts for comments:
 module load PrgEnv-amd
 module load cray-fftw
-module load cpe/24.11
-module load amd/6.2.4
-module load rocm/6.2.4
-module load hwloc
+module load cpe/26.03
+module load amd/7.2.0
+module load rocm/7.2.0
 
 # All default versions of CrayPE libraries (ie, mpich, fftw) are sym-linked to the same directory
 # This is done so that all of CrayPE can be linked by adding a single entry to LD_LIBRARY_PATH
@@ -38,7 +37,7 @@ echo "SBCAST exit code: $?"
 
 echo "Adding symlinks to several libraries"
 srun -N ${SLURM_NNODES} -n ${SLURM_NNODES} --ntasks-per-node=1 --label -D /mnt/bb/$USER/${base_exe}_libs \
-    bash -c "if [ -f libhsa-runtime64.so.1 ]; then ln -s libhsa-runtime64.so.1 libhsa-runtime64.so; fi; if [ -f libamdhip64.so.6 ]; then ln -s libamdhip64.so.6 libamdhip64.so; fi"
+    bash -c "if [ -f libhsa-runtime64.so.1 ]; then ln -s libhsa-runtime64.so.1 libhsa-runtime64.so; fi; if [ -f libamdhip64.so.7 ]; then ln -s libamdhip64.so.7 libamdhip64.so; fi"
 echo "Finished adding symlinks"
 
 echo "Patching LD_LIBRARY_PATH"
